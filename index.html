@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CostPlus Chemist — Everything at Cost + 15%</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --green: #00A67E;
+            --green-dark: #008F6B;
+            --bg: #FAFAFA;
+            --card-bg: #FFFFFF;
+            --text: #1A1A1A;
+            --text-muted: #666;
+            --border: #E5E5E5;
+            --tag-bg: #E8F5F1;
+            --savings-red: #DC2626;
+            --accent: #FF6B35;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* NAV */
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--green);
+            letter-spacing: -0.5px;
+        }
+        .logo span { color: var(--text); }
+        .nav-search {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+        .nav-search input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .nav-search input:focus { border-color: var(--green); }
+        .nav-search::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+        }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+        .nav-links a:hover { color: var(--green); }
+        .cart-btn {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #00A67E 0%, #00876A 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -1px;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+        .hero-formula {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .hero-formula .plus { color: #FFD700; font-size: 1.5rem; }
+        .hero-formula .equals { color: #FFD700; }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .how-step {
+            text-align: center;
+            flex: 1;
+        }
+        .how-step .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .how-step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .how-step p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* CATEGORIES */
+        .categories {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            overflow-x: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .cat-pill {
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            border: 2px solid var(--border);
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .cat-pill:hover, .cat-pill.active {
+            border-color: var(--green);
+            background: var(--tag-bg);
+            color: var(--green-dark);
+        }
+
+        /* PRODUCT GRID */
+        .products-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem 3rem;
+        }
+        .products-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* PRODUCT CARD */
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .product-img {
+            height: 160px;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            position: relative;
+        }
+        .savings-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--savings-red);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .product-info { padding: 1rem; }
+        .product-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        /* PRICE BREAKDOWN */
+        .price-breakdown {
+            background: #F8F9FA;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.15rem 0;
+            color: var(--text-muted);
+        }
+        .price-row.total {
+            border-top: 1px solid var(--border);
+            margin-top: 0.3rem;
+            padding-top: 0.4rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--green-dark);
+        }
+        .price-row.rrp {
+            color: var(--text-muted);
+        }
+        .price-row.rrp .strikethrough {
+            text-decoration: line-through;
+        }
+        .price-row.savings { color: var(--savings-red); font-weight: 700; }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.65rem;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .add-to-cart:hover { background: var(--green-dark); }
+
+        /* TRUST BAR */
+        .trust-bar {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+        .trust-items {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+        .trust-item { text-align: center; }
+        .trust-item .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .trust-item p { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+
+        /* BANNER */
+        .transparency-banner {
+            background: #FFF3E0;
+            border: 2px solid #FF9800;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .transparency-banner .icon { font-size: 2rem; }
+        .transparency-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .transparency-banner p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* FOOTER */
+        footer {
+            background: var(--text);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.75rem; }
+            .hero-formula { font-size: 1rem; padding: 0.75rem 1.25rem; }
+            .nav-search { display: none; }
+            .nav-links { gap: 0.75rem; }
+            .how-it-works { flex-direction: column; gap: 1rem; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .transparency-banner { flex-direction: column; text-align: center; margin: 1rem; }
+            .trust-items { gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="logo">CostPlus<span>Chemist</span></div>
+    <div class="nav-search">
+        <input type="text" placeholder="Search 5,000+ products..." id="searchInput" oninput="filterProducts()">
+    </div>
+    <div class="nav-links">
+        <a href="#">How It Works</a>
+        <a href="#">Categories</a>
+        <button class="cart-btn">🛒 Cart (0)</button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Every Product. Honest Pricing.</h1>
+    <p>We show you what we pay. You pay 15% more. That's it. No hidden markups, no loyalty card games, no inflated RRPs.</p>
+    <div class="hero-formula">
+        <span>Our Cost</span>
+        <span class="plus">+</span>
+        <span>15%</span>
+        <span class="equals">=</span>
+        <span>Your Price</span>
+    </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-it-works">
+    <div class="how-step">
+        <div class="icon">📦</div>
+        <h3>We Source Direct</h3>
+        <p>Straight from Australian wholesalers — Sigma, Symbion, CH2</p>
+    </div>
+    <div class="how-step">
+        <div class="icon">🔍</div>
+        <h3>We Show Our Cost</h3>
+        <p>Every product shows exactly what we paid — no secrets</p>
+    </div>
+    <div class="how-step">
+        <div class="icon">➕</div>
+        <h3>We Add 15%</h3>
+        <p>Flat margin on everything. That's how we keep the lights on</p>
+    </div>
+    <div class="how-step">
+        <div class="icon">🚚</div>
+        <h3>Shipped to You</h3>
+        <p>$8.95 flat rate. Free over $99. Express available.</p>
+    </div>
+</div>
+
+<!-- TRANSPARENCY BANNER -->
+<div class="transparency-banner">
+    <div class="icon">💡</div>
+    <div>
+        <h3>Why are we showing our costs?</h3>
+        <p>Because pharmacy has a markup problem. Most chemists buy products for $5 and sell for $15-25. We think you deserve to know. Our cost is public. Our margin is fixed. You save on everything.</p>
+    </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="categories">
+    <div class="cat-pill active" onclick="filterCategory('all')">All Products</div>
+    <div class="cat-pill" onclick="filterCategory('vape')">🚬 Nicotine & Quit Smoking</div>
+    <div class="cat-pill" onclick="filterCategory('pain')">💊 Pain & Inflammation</div>
+    <div class="cat-pill" onclick="filterCategory('vitamins')">🍊 Vitamins & Supplements</div>
+    <div class="cat-pill" onclick="filterCategory('skincare')">🧴 Skincare</div>
+    <div class="cat-pill" onclick="filterCategory('allergy')">🤧 Allergy & Hayfever</div>
+    <div class="cat-pill" onclick="filterCategory('digestive')">🫁 Digestive Health</div>
+    <div class="cat-pill" onclick="filterCategory('first-aid')">🩹 First Aid</div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products-section">
+    <h2>Popular Products</h2>
+    <div class="product-grid" id="productGrid"></div>
+</div>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+    <div class="trust-items">
+        <div class="trust-item">
+            <div class="icon">👨‍⚕️</div>
+            <p>Licensed Australian<br>Pharmacist</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">🔒</div>
+            <p>AHPRA Registered<br>PHA0002147134</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">🇦🇺</div>
+            <p>Australian Owned<br>& Operated</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">📦</div>
+            <p>$8.95 Flat Shipping<br>Free Over $99</p>
+        </div>
+        <div class="trust-item">
+            <div class="icon">💯</div>
+            <p>100% Transparent<br>Pricing Always</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>CostPlus Chemist — ABN XX XXX XXX XXX | Pharmacist: Mohammad Jaber (AHPRA PHA0002147134)</p>
+    <p style="margin-top: 0.5rem;">This pharmacy is operated in accordance with the Therapeutic Goods Act 1989 and relevant state legislation.</p>
+</footer>
+
+<script>
+const products = [
+    // Nicotine & Quit Smoking
+    { name: "VUSE ePod Nicotine Pods 18mg/mL (2 Pack)", emoji: "🚬", cost: 8.50, rrp: 24.95, cat: "vape" },
+    { name: "VUSE GO 1000 Disposable 20mg/mL — Mint", emoji: "🌿", cost: 9.20, rrp: 27.95, cat: "vape" },
+    { name: "Nicorette QuickMist Spray 150 Sprays", emoji: "💨", cost: 16.80, rrp: 38.99, cat: "vape" },
+    { name: "Nicabate CQ Clear Patch 21mg 7 Pack", emoji: "🩹", cost: 12.40, rrp: 29.99, cat: "vape" },
+    { name: "Nicorette Gum Icy Mint 4mg 75 Pieces", emoji: "🍬", cost: 14.20, rrp: 34.99, cat: "vape" },
+    { name: "VUSE ePod Device Kit — Graphite", emoji: "⚡", cost: 6.80, rrp: 19.95, cat: "vape" },
+
+    // Pain
+    { name: "Nurofen Zavance 256mg 96 Tablets", emoji: "💊", cost: 7.10, rrp: 22.99, cat: "pain" },
+    { name: "Voltaren Rapid 25mg 30 Tablets", emoji: "⚡", cost: 6.90, rrp: 18.49, cat: "pain" },
+    { name: "Panadol Osteo 96 Tablets", emoji: "💊", cost: 4.20, rrp: 12.99, cat: "pain" },
+    { name: "Deep Heat Cream 100g", emoji: "🔥", cost: 3.80, rrp: 11.49, cat: "pain" },
+
+    // Vitamins
+    { name: "Swisse Ultivite Mens Multi 60 Tabs", emoji: "💪", cost: 8.50, rrp: 32.99, cat: "vitamins" },
+    { name: "Blackmores Fish Oil 1000mg 400 Caps", emoji: "🐟", cost: 12.60, rrp: 39.99, cat: "vitamins" },
+    { name: "Cenovis Vitamin C 500mg 300 Tabs", emoji: "🍊", cost: 6.80, rrp: 22.50, cat: "vitamins" },
+    { name: "Nature's Own Magnesium 150 Tabs", emoji: "✨", cost: 5.90, rrp: 19.99, cat: "vitamins" },
+
+    // Skincare
+    { name: "CeraVe Moisturising Cream 340g", emoji: "🧴", cost: 9.80, rrp: 24.95, cat: "skincare" },
+    { name: "La Roche-Posay Effaclar Duo+ 40mL", emoji: "✨", cost: 14.20, rrp: 34.95, cat: "skincare" },
+    { name: "Cancer Council SPF50+ 200mL", emoji: "☀️", cost: 4.90, rrp: 14.99, cat: "skincare" },
+
+    // Allergy
+    { name: "Telfast 180mg 70 Tablets", emoji: "🤧", cost: 11.50, rrp: 39.99, cat: "allergy" },
+    { name: "Zyrtec Rapid Acting 70 Tabs", emoji: "💊", cost: 10.80, rrp: 36.99, cat: "allergy" },
+    { name: "Nasonex Allergy Spray 140 Sprays", emoji: "👃", cost: 12.90, rrp: 32.95, cat: "allergy" },
+
+    // Digestive
+    { name: "Nexium 24HR 20mg 28 Tablets", emoji: "🫁", cost: 9.60, rrp: 27.99, cat: "digestive" },
+    { name: "Metamucil Orange Smooth 72 Doses", emoji: "🍊", cost: 11.40, rrp: 29.99, cat: "digestive" },
+
+    // First Aid
+    { name: "Band-Aid Advanced Healing 10 Pack", emoji: "🩹", cost: 3.20, rrp: 10.99, cat: "first-aid" },
+    { name: "Betadine Antiseptic Cream 65g", emoji: "🧴", cost: 4.10, rrp: 12.49, cat: "first-aid" },
+];
+
+let currentCategory = 'all';
+
+function renderProducts(filter = '') {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = '';
+    
+    products
+        .filter(p => currentCategory === 'all' || p.cat === currentCategory)
+        .filter(p => !filter || p.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(p => {
+            const ourPrice = (p.cost * 1.15).toFixed(2);
+            const saving = (p.rrp - ourPrice).toFixed(2);
+            const savingPct = Math.round((saving / p.rrp) * 100);
+            
+            grid.innerHTML += `
+                <div class="product-card">
+                    <div class="product-img">
+                        ${p.emoji}
+                        <div class="savings-badge">Save ${savingPct}%</div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="price-breakdown">
+                            <div class="price-row">
+                                <span>Our cost</span>
+                                <span>$${p.cost.toFixed(2)}</span>
+                            </div>
+                            <div class="price-row">
+                                <span>+ 15% margin</span>
+                                <span>$${(p.cost * 0.15).toFixed(2)}</span>
+                            </div>
+                            <div class="price-row total">
+                                <span>You pay</span>
+                                <span>$${ourPrice}</span>
+                            </div>
+                            <div class="price-row rrp">
+                                <span>Pharmacy RRP</span>
+                                <span class="strikethrough">$${p.rrp.toFixed(2)}</span>
+                            </div>
+                            <div class="price-row savings">
+                                <span>You save</span>
+                                <span>$${saving} (${savingPct}%)</span>
+                            </div>
+                        </div>
+                        <button class="add-to-cart" onclick="event.stopPropagation(); addToCart('${p.name}')">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+        });
+}
+
+function filterCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+    renderProducts(document.getElementById('searchInput').value);
+}
+
+function filterProducts() {
+    renderProducts(document.getElementById('searchInput').value);
+}
+
+let cartCount = 0;
+function addToCart(name) {
+    cartCount++;
+    document.querySelector('.cart-btn').textContent = `🛒 Cart (${cartCount})`;
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
