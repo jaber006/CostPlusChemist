@@ -1,0 +1,5 @@
+public/images/products/
+scripts/
+data/image_urls.json
+data/sigma_catalog.ndjson
+data/failed_images.json
